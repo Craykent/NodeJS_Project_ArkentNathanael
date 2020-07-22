@@ -22,7 +22,7 @@ app.use((req,res,next)=>{
 //Temporary Data
 const users = [
     {id:1, fName: 'Arkent Nathanael', email:'arkent.huang@gmail.com', password:'12345678'}
-];
+]
 
 app.get('/api/users', (req,res)=>{
 
