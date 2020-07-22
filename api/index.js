@@ -40,7 +40,7 @@ app.post('/api/users', (req,res)=>{
     console.log("Incoming HTTP Request!");
     console.log(req.body);
 
-    const {error} = validateUser(req.body);
+    const {error} = validateUserRegis(req.body);
     if (error) {
         console.log('Validation error');
 
@@ -77,8 +77,46 @@ app.post('/api/users', (req,res)=>{
     return res.json(user);
 });
 
+//Login
+app.get('/api/users/:email/:password', (req,res)=>{
 
-function validateUser(user){
+    var datetime = new Date();
+    console.log("\n"+ datetime);
+    console.log("Incoming new GET HTTP request");
+    console.log(req.body);
+
+    const {error} = validateUserLogin(req.body);
+    if (error) {
+        console.log('Validation error');
+
+        var jsonRespond = {
+            result: "",
+            message: error.details[0].message
+        }
+
+        return res.status(400).json(jsonRespond);
+    }
+    console.log('Check existing email: '+req.params.email+' and password: '+req.params.password);
+    const check_user = users.find( u => u.email === req.params.email && u.password === req.params.password );
+    if (!check_user) {
+        var error_message = 'Invalid login detail. Email or password is not correct.';
+        console.log(error_message);
+
+        var jsonRespond = {
+            result: "",
+            message: error_message
+        }
+
+        return res.status(404).json(jsonRespond);
+    }
+    var jsonRespond = {
+        message: "Login Successful!"
+    }
+    return res.json(jsonRespond);
+})
+
+
+function validateUserRegis(user){
     const schema = Joi.object({
         fName: Joi.string().min(1).max(100).required(),
         email: Joi.string().email({ minDomainSegments: 2, tlds: {allow:['com', 'net'] } }),
@@ -88,3 +126,11 @@ function validateUser(user){
     return schema.validate(user);
 }
 
+function validateUserLogin(user){
+    const schema = Joi.object({
+        email: Joi.string().email({ minDomainSegments: 2, tlds: {allow:['com', 'net'] } }),
+        password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+    });
+
+    return schema.validate(user);
+}
