@@ -21,7 +21,8 @@ app.use((req,res,next)=>{
 
 //Temporary Data
 const users = [
-    {id:1, fName: 'Arkent Nathanael', email:'arkent.huang@gmail.com', password:'12345678'}
+    {id:1, username: 'Craykent', email:'arkent.huang@gmail.com', password:'12345678'},
+    {id:2, username: 'Cray', email:'arkent.huang123@gmail.com', password:'12345678'}
 ]
 
 app.get('/api/users', (req,res)=>{
@@ -96,10 +97,10 @@ app.get('/api/users/:email/:password', (req,res)=>{
 
         return res.status(400).json(jsonRespond);
     }
-    console.log('Check existing email: '+req.params.email+' and password: '+req.params.password);
-    const check_user = users.find( u => u.email === req.params.email && u.password === req.params.password );
+    console.log('Check existing username: '+req.params.username+' and password: '+req.params.password);
+    const check_user = users.find( u => u.username === req.params.username && u.password === req.params.password );
     if (!check_user) {
-        var error_message = 'Invalid login detail. Email or password is not correct.';
+        var error_message = 'Invalid login detail. Username or password is not correct.';
         console.log(error_message);
 
         var jsonRespond = {
@@ -118,7 +119,7 @@ app.get('/api/users/:email/:password', (req,res)=>{
 
 function validateUserRegis(user){
     const schema = Joi.object({
-        fName: Joi.string().min(1).max(100).required(),
+        username: Joi.string().min(1).max(100).required(),
         email: Joi.string().email({ minDomainSegments: 2, tlds: {allow:['com', 'net'] } }),
         password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
     });
@@ -128,7 +129,7 @@ function validateUserRegis(user){
 
 function validateUserLogin(user){
     const schema = Joi.object({
-        email: Joi.string().email({ minDomainSegments: 2, tlds: {allow:['com', 'net'] } }),
+        username: Joi.string().min(1).max(100).required(),
         password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
     });
 

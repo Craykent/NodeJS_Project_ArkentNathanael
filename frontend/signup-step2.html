@@ -12,6 +12,7 @@
 		<link rel="stylesheet" href="icons/Iconsmind__Ultimate_Pack/Line%20icons/styles.min.css"><!-- iconsmind.com Icons -->
 		
 		<title>SKRN - Media Streaming App</title>
+		<script src="../api/index.js"></script>
 	</head>
 	<body>
 		
@@ -149,22 +150,22 @@
 							 <div class="registration-social-login-container">
 
     	  						 <div class="form-group">
-    								 <label for="full-name" class="col-form-label">Full Name</label>
-    	  							 <input type="text" class="form-control" id="full-name" placeholder="John Doe">
+    								 <label for="username" class="col-form-label">Username</label>
+    	  							 <input type="text" class="form-control" id="username" placeholder="JohnDoe502" required>
     	  						 </div>
     	  						 <div class="form-group">
     								 <label for="email" class="col-form-label">Email</label>
-    	  							 <input type="text" class="form-control" id="email" placeholder="jondoe@gmail.com">
+    	  							 <input type="text" class="form-control" id="email" placeholder="jondoe@gmail.com" required>
     	  						 </div>
     	  						 <div class="form-group">
     								 <div class="row">
     									<div class="col">
     	  								 <label for="password" class="col-form-label">Password</label>
-    	  	  							 <input type="password" class="form-control" id="password" placeholder="&middot;&middot;&middot;&middot;&middot;&middot;">
+    	  	  							 <input type="password" class="form-control" id="password" placeholder="&middot;&middot;&middot;&middot;&middot;&middot;" required>
     									</div>
     									<div class="col">
     	  								 <label for="confirm-password" class="col-form-label">&nbsp;</label>
-    	  	  							 <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password">
+    	  	  							 <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password" required>
     									</div>
     								 </div>
     	  						 </div>
@@ -182,11 +183,14 @@
 							 
 							 <div class="clearfix"></div>
 	  						 <div class="form-group last-form-group-continue">
-	  							 <a href="signup-step3.html" class="btn btn-green-pro">Continue</a>
-								 <span class="checkbox-remember-pro"><input type="checkbox" id="checkbox-terms"><label for="checkbox-terms" class="col-form-label">By clicking "Continue", you agree to our <a href="#!">Terms of Use</a> and 
-<a href="#!">Privacy Policy</a> including the use of cookies.</label></span>
+								 <button onclick="checkEmail()" id="register" class="btn btn-green-pro">Continue</button>
+	  							   <!-- <a href="signup-step3.html" id="register" class="btn btn-green-pro" onclick='checkEmail()'>Continue</a> -->
+								 <span class="checkbox-remember-pro"><input type="checkbox" id="checkbox-terms"><label for="checkbox-terms" class="col-form-label">By clicking "Continue", you agree to our
+									 <a href="#!">Terms of Use</a> and<a href="#!">Privacy Policy</a> including the use of cookies.</label>
+								 </span>
 								 <div class="clearfix"></div>
 	  						 </div>
+
 	  					 </form>
 							
 						</div><!-- close .registration-steps-page-container -->
@@ -233,10 +237,10 @@
 					 <div class="registration-social-login-container">
 						 <form>
 							 <div class="form-group">
-								 <input type="text" class="form-control" id="username" placeholder="Username">
+								 <input type="text" class="form-control" id="usernamelogin" placeholder="Username">
 							 </div>
 							 <div class="form-group">
-								 <input type="password" class="form-control" id="password" placeholder="Password">
+								 <input type="password" class="form-control" id="passwordlogin" placeholder="Password">
 							 </div>
 							 <div class="form-group">
 								 <button type="button" class="btn btn-green-pro btn-display-block">Sign In</button>
@@ -282,6 +286,67 @@
 		<script src="js/navigation.js" defer></script><!-- Header Navigation JS -->
 		<script src="js/jquery.flexslider-min.js" defer></script><!-- Custom Document Ready JS -->		
 		<script src="js/script.js" defer></script><!-- Custom Document Ready JS -->
+
+		<!-- Sign in / Register -->
+		<script>
+			function checkEmail(){
+				var url ="http://localhost:3000/api/users";
+				var email={};
+				email.name= document.getElementById('email').value;
+				email = JSON.stringify(email);
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', url, true);
+				xhr.onload = function () {
+					var users = JSON.parse(xhr.responseText);
+					if (xhr.readyState == 4 && xhr.status == "200") {
+						users.forEach((val) => {
+							if(email = val.email) {
+								return alert("Email is registered! Use another email.");
+							} else {
+								confirmPassword();
+							}
+						})
+
+					} else {
+						console.error(users);
+					}
+				}
+			}
+
+
+			function confirmPassword(){
+				var password = document.getElementById('password').value;
+				var conPassword = document.getElementById('confirm-password').value;
+				if(password != conPassword)	alert("Password does not match!");
+				registerUser();
+			}
+
+
+			function registerUser(){
+				var url = "http://localhost:300/api/users";
+				var data = {};
+				data.name= document.getElementById('register').value;
+				var json = JSON.stringify(data);
+				var content = "<tr><th>username</th><th>email</th><th>password</th></tr>"
+
+				var xhr = new XMLHttpRequest();
+				xhr.open('POST', url, true );
+				xhr.setRequestHeader('Content-type', 'Application/json; charset=utf-8');
+				xhr.onload = function () {
+					var user = JSON.parse(xhr.responseText);
+					if (xhr.readyState == 4 && xhr.status == "200") {
+						content += "<tr><td>" + course.id + "</td><td>" + course.name + "</td></tr>";
+						document.getElementById('result').innerHTML = content;
+					} else {
+						console.error(users);
+					}
+
+				}
+				xhr.send(json);
+
+			}
+		</script>
 		
 	</body>
 </html>
+
