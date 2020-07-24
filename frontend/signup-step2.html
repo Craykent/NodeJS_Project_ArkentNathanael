@@ -183,7 +183,7 @@
 							 
 							 <div class="clearfix"></div>
 	  						 <div class="form-group last-form-group-continue">
-								 <button onclick="checkEmail()" id="register" class="btn btn-green-pro">Continue</button>
+								 <button onclick="registerUser()" id="register" class="btn btn-green-pro">Continue</button>
 	  							   <!-- <a href="signup-step3.html" id="register" class="btn btn-green-pro" onclick='checkEmail()'>Continue</a> -->
 								 <span class="checkbox-remember-pro"><input type="checkbox" id="checkbox-terms"><label for="checkbox-terms" class="col-form-label">By clicking "Continue", you agree to our
 									 <a href="#!">Terms of Use</a> and<a href="#!">Privacy Policy</a> including the use of cookies.</label>
@@ -289,45 +289,15 @@
 
 		<!-- Sign in / Register -->
 		<script>
-			function checkEmail(){
-				var url ="http://localhost:3000/api/users";
-				var email={};
-				email.name= document.getElementById('email').value;
-				email = JSON.stringify(email);
-				var xhr = new XMLHttpRequest();
-				xhr.open('GET', url, true);
-				xhr.onload = function () {
-					var users = JSON.parse(xhr.responseText);
-					if (xhr.readyState == 4 && xhr.status == "200") {
-						users.forEach((val) => {
-							if(email = val.email) {
-								return alert("Email is registered! Use another email.");
-							} else {
-								confirmPassword();
-							}
-						})
-
-					} else {
-						console.error(users);
-					}
-				}
-			}
-
-
-			function confirmPassword(){
-				var password = document.getElementById('password').value;
-				var conPassword = document.getElementById('confirm-password').value;
-				if(password != conPassword)	alert("Password does not match!");
-				registerUser();
-			}
-
 
 			function registerUser(){
-				var url = "http://localhost:300/api/users";
+				var url = "http://localhost:3000/api/users";
 				var data = {};
-				data.name= document.getElementById('register').value;
+				data.username= document.getElementById('username').value;
+				data.email = document.getElementById('email').value;
+				data.password = document.getElementById('password').value;
 				var json = JSON.stringify(data);
-				var content = "<tr><th>username</th><th>email</th><th>password</th></tr>"
+				var content = "<tr><th>id</th><th>username</th><th>email</th><th>password</th></tr>"
 
 				var xhr = new XMLHttpRequest();
 				xhr.open('POST', url, true );
@@ -335,14 +305,16 @@
 				xhr.onload = function () {
 					var user = JSON.parse(xhr.responseText);
 					if (xhr.readyState == 4 && xhr.status == "200") {
-						content += "<tr><td>" + course.id + "</td><td>" + course.name + "</td></tr>";
+						content += "<tr><td>" + user.id + "</td><td>" + user.username + "</td><td>" + user.email + "</td><td>" + user.password + "</td></tr>" ;
 						document.getElementById('result').innerHTML = content;
+						alert('Registered');
 					} else {
 						console.error(users);
 					}
 
 				}
 				xhr.send(json);
+				window.location.href="signup-step3.html";
 
 			}
 		</script>
