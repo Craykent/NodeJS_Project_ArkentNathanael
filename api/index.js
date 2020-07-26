@@ -170,6 +170,91 @@ app.post('/api/movies/', (req,res)=>{
     console.log("Incoming HTTP Request!");
     console.log(req.body);
 
+    const {error} = validateMovie(req.body);
+    if (error) {
+        console.log('Validation error');
+
+        var jsonRespond = {
+            result: "",
+            message: error.details[0].message
+        }
+
+        return res.status(400).json(jsonRespond);
+    }
+
+    const check_movie = movies.find(m => m.title === req.body.title);
+    if(check_movie) {
+        console.log('Movie : ' + req.body.title+ ' has been registered! Possible copyright issue?');
+
+        var jsonRespondtitleerror = {
+            result: "",
+            message: 'Inserting failed. Movie: ' +req.body.title+ ' is already registered! Create your own original title!!'
+        }
+        return res.status(404).json(jsonRespondtitleerror);
+    }
+    console.log('Adding movie...');
+    const movie = {
+        id: movies.length + 1,
+        title: req.body.title,
+        release_date: req.body.release_date,
+        movie_length: req.body.movie_length,
+        director: req.body.director,
+        summary: req.body.summary
+
+    };
+    movies.push(movie);
+    return res.json(movie);
+
+})
+
+app.put('/api/movies/:title', (req,res)=>{
+
+    var datetime = new Date();
+    console.log("\n===================");
+    console.log("\n"+ datetime);
+    console.log("Incoming HTTP Request!");
+    console.log('Updating ID: ' + req.params.title);
+    console.log(req.body);
+
+    const movie = movies.find(m => m.title === req.params.title);
+    if(!movie){
+        var jsonRespond = {
+            result:"",
+            message:"Movie with ID: " +req.params.id+" does not exist!"
+        };
+        return res.status(404).json(jsonRespond);
+    }
+
+        movie.release_date = req.body.release_date;
+        movie.movie_length = req.body.movie_length;
+        movie.director = req.body.director;
+        movie.summary = req.body.summary;
+        console.log('Updating...');
+        return res.json(movie);
+})
+
+app.delete('/api/movies/:title', (req,res)=>{
+
+    var datetime = new Date();
+    console.log("\n===================");
+    console.log("\n"+ datetime);
+    console.log("Incoming HTTP Request!");
+    console.log('Deleting ID: ' + req.params.title);
+    console.log(req.body);
+
+    const movie = movies.find(m => m.title === req.params.title);
+    if(!movie){
+        var jsonRespond = {
+            result:"",
+            message:"Movie with ID: " +req.params.id+" does not exist!"
+        };
+        return res.status(404).json(jsonRespond);
+    }
+
+    const index = movies.indexOf(movie);
+    movies.splice(index, 1);
+    console.log('Movie with title: ' +movie.title+' has been deleted!');
+    return res.json(movie);
 })
 
 
@@ -190,4 +275,16 @@ function validateUserLogin(user){
     });
 
     return schema.validate(user);
+}
+
+function validateMovie(movie){
+    const schema = Joi.object({
+        title: Joi.string().required(),
+        release_date: Joi.string().required(),
+        movie_length : Joi.string().required(),
+        director: Joi.string().required(),
+        summary: Joi.string().required()
+    });
+
+    return schema.validate(movie);
 }
