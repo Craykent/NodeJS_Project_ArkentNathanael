@@ -10,8 +10,8 @@
 		
 		<link rel="stylesheet" href="icons/fontawesome/css/fontawesome-all.min.css"><!-- FontAwesome Icons -->
 		<link rel="stylesheet" href="icons/Iconsmind__Ultimate_Pack/Line%20icons/styles.min.css"><!-- iconsmind.com Icons -->
-		
-		
+
+
 		<title>SKRN - Media Streaming App</title>
 	</head>
 	<body>
@@ -124,12 +124,12 @@
 			</div><!-- close .video-search-header -->
 			
 			<div id="mobile-bars-icon-pro" class="noselect"><i class="fas fa-bars"></i></div>
-			
-			
+
 			<div id="header-user-profile">
 				<div id="header-user-profile-click" class="noselect">
+
 					<img src="images/demo/user-profile.jpg" alt="Suzie">
-					<div id="header-username">Suzie Smith</div><i class="fas fa-angle-down"></i>
+					<div id="header-username"></div><i class="fas fa-angle-down"></i>
 				</div><!-- close #header-user-profile-click -->
 				<div id="header-user-profile-menu">
 					<ul>
@@ -760,6 +760,15 @@ single New Yorkers.</p>
 		
 		
 		</div><!-- close #sidebar-bg-->
+
+		<!-- Retrieve localStorage -->
+
+		<script>
+			window.onload = function(){
+				document.getElementById("header-username").innerHTML = localStorage.getItem("username");
+			}
+
+		</script>
 		
 		<!-- Required Framework JavaScript -->
 		<script src="js/libs/jquery-3.3.1.min.js"></script><!-- jQuery -->

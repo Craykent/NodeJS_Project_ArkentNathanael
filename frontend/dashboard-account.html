@@ -129,7 +129,7 @@
 			<div id="header-user-profile">
 				<div id="header-user-profile-click" class="noselect">
 					<img src="images/demo/user-profile.jpg" alt="Suzie">
-					<div id="header-username">Suzie Smith</div><i class="fas fa-angle-down"></i>
+					<div id="header-username"></div><i class="fas fa-angle-down"></i>
 				</div><!-- close #header-user-profile-click -->
 				<div id="header-user-profile-menu">
 					<ul>
@@ -458,6 +458,13 @@
 		
 		
 		</div><!-- close #sidebar-bg-->
+
+		<script>
+			window.onload = function(){
+				document.getElementById("header-username").innerHTML = localStorage.getItem("username");
+			}
+
+		</script>
 		
 		<!-- Required Framework JavaScript -->
 		<script src="js/libs/jquery-3.3.1.min.js"></script><!-- jQuery -->

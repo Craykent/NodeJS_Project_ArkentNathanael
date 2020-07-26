@@ -10,6 +10,8 @@
 		
 		<link rel="stylesheet" href="icons/fontawesome/css/fontawesome-all.min.css"><!-- FontAwesome Icons -->
 		<link rel="stylesheet" href="icons/Iconsmind__Ultimate_Pack/Line%20icons/styles.min.css"><!-- iconsmind.com Icons -->
+
+		<script src="../api/index.js"></script>
 		
 		<title>SKRN - Media Streaming App</title>
 	</head>
@@ -177,13 +179,13 @@
 					 <div class="registration-social-login-container">
 						 <form>
 							 <div class="form-group">
-								 <input type="text" class="form-control" id="username" placeholder="Username">
+								 <input type="text" class="form-control" id="email-login" placeholder="Email">
 							 </div>
 							 <div class="form-group">
-								 <input type="password" class="form-control" id="password" placeholder="Password">
+								 <input type="password" class="form-control" id="password-login" placeholder="Password">
 							 </div>
 							 <div class="form-group">
-								 <button type="button" class="btn btn-green-pro btn-display-block">Sign In</button>
+								 <button type="button" onclick="loginUser()" class="btn btn-green-pro btn-display-block">Sign In</button>
 							 </div>
 							 <div class="container-fluid">
 								 <div class="row no-gutters">
@@ -214,6 +216,42 @@
 		    </div><!-- close .modal-content -->
 		  </div><!-- close .modal-dialog -->
 		</div><!-- close .modal -->
+
+		<!-- Sign in / Login -->
+		<script>
+
+			function loginUser(){
+				email = document.getElementById('email-login').value;
+				password = document.getElementById('password-login').value;
+				var url="http://localhost:3000/api/users/"+email+"/"+password;
+				let data = {};
+				data.email = email;
+				data.password = password;
+				var json = JSON.stringify(data);
+
+				var xhr= new XMLHttpRequest();
+				xhr.open('GET', url, true);
+				xhr.setRequestHeader('Content-type', 'Application/json; charset=utf-8');
+				xhr.onload = function(){
+					console.log(xhr.responseText);
+					var response = JSON.parse(xhr.responseText);
+					if( xhr.readyState == 4 && xhr.status == "200"){
+						console.log(response.message);
+						alert('Login Successful');
+						localStorage.setItem("username", response.username);
+						window.location.replace("dashboard-new-arrivals.html");
+
+					} else {
+						console.log(response);
+						alert(response.message);
+						alert('Login failed!');
+					}
+				}
+
+				xhr.send(null);
+			}
+
+		</script>
 		
 
 		<!-- Required Framework JavaScript -->
